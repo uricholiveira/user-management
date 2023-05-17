@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "backend-py"
+version = "0.1.0"
+description = ""
+authors = ["Urich Oliveira <oliveira.urich@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.95.0"
+uvicorn = "^0.21.1"
+pydantic = {extras = ["email"], version = "^1.10.7"}
+dependency-injector = "^4.41.0"
+sqlalchemy = "^2.0.8"
+alembic = "^1.10.2"
+arrow = "^1.2.3"
+psycopg2 = "^2.9.6"
+psutil = "^5.9.4"
+contextvars = "^2.4"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.2"
+bump2version = "^1.0.1"
+pre-commit = "^3.2.2"
+python-dotenv = "^1.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+addopts = "-ra -q"
+python_files = "*.py"
+python_classes = "Test"
+testpaths = [
+    "tests"
+]
