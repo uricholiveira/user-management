@@ -2,7 +2,8 @@ import uuid
 from contextlib import AbstractContextManager, contextmanager
 from typing import Callable
 
-from sqlalchemy import UUID, Column, create_engine, orm
+import arrow
+from sqlalchemy import Column, DateTime, String, create_engine, orm
 from sqlalchemy.ext.declarative import as_declarative
 from sqlalchemy.orm import Session, declared_attr
 
@@ -36,15 +37,18 @@ class Database:
 
 @as_declarative()
 class Base:
-    id: UUID = Column(
-        UUID,
+    id = Column(
+        String,
         primary_key=True,
-        default=uuid.uuid4(),
+        default=str(uuid.uuid4()),
         nullable=False,
     )
+
+    created_at = Column(DateTime, default=arrow.utcnow().datetime, nullable=False)
+    updated_at = Column(DateTime, onupdate=arrow.utcnow().datetime, nullable=True)
     __name__: str
 
     # Generate __tablename__ automatically
     @declared_attr
     def __tablename__(self) -> str:
-        return self.__name__.replace("Model", "")
+        return self.__name__.replace("Model", "").lower()
