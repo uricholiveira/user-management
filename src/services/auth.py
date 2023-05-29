@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
 from typing import Type
 
 from fastapi import HTTPException
@@ -25,9 +25,12 @@ class AuthService:
                 detail="Incorrect username or password",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-        access_token_expires = timedelta(minutes=settings.app.security.access_token_expire_minutes)
+        access_token_expires = timedelta(
+            minutes=settings.app.security.access_token_expire_minutes
+        )
         access_token = await self.create_access_token(
-            data={"sub": user.email, "scope": "credentials", "roles": []}, expires_delta=access_token_expires
+            data={"sub": user.email, "scope": "credentials", "roles": []},
+            expires_delta=access_token_expires,
         )
         return {"access_token": access_token, "token_type": "bearer"}
 
@@ -42,12 +45,20 @@ class AuthService:
             return False
         return user
 
-    async def create_access_token(self, data: dict, expires_delta: timedelta | None = None):
+    async def create_access_token(
+        self, data: dict, expires_delta: timedelta | None = None
+    ):
         to_encode = data.copy()
         if expires_delta:
             expire = datetime.utcnow() + expires_delta
         else:
-            expire = datetime.utcnow() + timedelta(minutes=settings.app.security.access_token_expire_minutes)
+            expire = datetime.utcnow() + timedelta(
+                minutes=settings.app.security.access_token_expire_minutes
+            )
         to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(to_encode, settings.app.security.secret_key, algorithm=settings.app.security.algorithm)
+        encoded_jwt = jwt.encode(
+            to_encode,
+            settings.app.security.secret_key,
+            algorithm=settings.app.security.algorithm,
+        )
         return encoded_jwt

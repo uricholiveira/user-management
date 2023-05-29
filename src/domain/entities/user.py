@@ -15,11 +15,9 @@ class CreateUserResponse(CreateUserRequest):
 
     class Config:
         orm_mode = True
-        json_encoders = {
-            CustomDatetime: CustomDatetime.to_str
-        }
+        json_encoders = {CustomDatetime: CustomDatetime.to_str}
         fields = {
-            'password': {
-                'exclude': ...,
+            "password": {
+                "exclude": ...,
             }
         }

@@ -1,16 +1,15 @@
 from contextlib import AbstractContextManager
-from typing import Callable, Type, List
+from typing import Callable, Type
 
 from sqlalchemy.orm import Session
 
 from src.domain.entities.user import CreateUserRequest
-from src.domain.models import UserModel
 from src.domain.models.user import UserModel
 
 
 class UserRepository:
     def __init__(
-            self, session_factory: Callable[..., AbstractContextManager[Session]]
+        self, session_factory: Callable[..., AbstractContextManager[Session]]
     ) -> None:
         self.session_factory = session_factory
 
@@ -34,4 +33,3 @@ class UserRepository:
             session.refresh(user)
 
         return user
-

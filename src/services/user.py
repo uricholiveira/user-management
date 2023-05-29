@@ -22,7 +22,9 @@ class UserService:
     async def create_user(self, data: CreateUserRequest) -> UserModel:
         has_user = await self.get_user_by_email(data.email)
         if has_user:
-            raise HTTPException(status_code=409, detail={"message": "User cannot be created"})
+            raise HTTPException(
+                status_code=409, detail={"message": "User cannot be created"}
+            )
 
         data.password = self.get_password_hash(data.password)
         return await self._repository.create(data=data)

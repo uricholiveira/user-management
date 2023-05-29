@@ -13,5 +13,5 @@ class ApplicationConfig(BaseSettings):
     description: str = "A simple backend api template"
     host: str = "localhost"
     port: int = 3000
-    timezone: str = 'America/Sao_Paulo'
+    timezone: str = "America/Sao_Paulo"
     security: ApplicationSecurityConfig = ApplicationSecurityConfig()

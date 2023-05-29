@@ -1,5 +1,4 @@
-import arrow
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String
 
 from src.common.database import Base
 

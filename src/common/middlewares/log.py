@@ -1,6 +1,7 @@
 import json
 import logging
 import time
+from traceback import format_exception
 from typing import Any, Callable
 
 from fastapi import FastAPI, Request
@@ -11,8 +12,6 @@ from starlette.types import Message
 from src.common.constants import X_REQUEST_ID_HEADER_NAME
 from src.common.util.async_iterator import AsyncIteratorWrapper
 from src.common.util.request_context import RequestContext
-
-from traceback import format_exception
 
 
 class LoggingMiddleware(BaseHTTPMiddleware):
@@ -114,7 +113,9 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         if response.status_code == 500:
             resp_body = response.body.decode("utf-8")
         else:
-            resp_body = [section async for section in response.__dict__["body_iterator"]]
+            resp_body = [
+                section async for section in response.__dict__["body_iterator"]
+            ]
         response.__setattr__("body_iterator", AsyncIteratorWrapper(resp_body))
 
         try:
@@ -150,4 +151,8 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 
         except Exception as e:
             print({"path": request.url.path, "method": request.method, "reason": e})
-            return Response(content=str(format_exception(e)), status_code=500, headers=request.headers)
+            return Response(
+                content=str(format_exception(e)),
+                status_code=500,
+                headers=request.headers,
+            )

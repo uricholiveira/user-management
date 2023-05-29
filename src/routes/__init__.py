@@ -1,3 +1,3 @@
-from src.routes import health_check, user, auth
+from src.routes import auth, health_check, user
 
 routers = [health_check.router, user.router, auth.router]

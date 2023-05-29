@@ -3,7 +3,7 @@ from contextlib import AbstractContextManager, contextmanager
 from typing import Callable
 
 import arrow
-from sqlalchemy import Column, create_engine, orm, String, DateTime
+from sqlalchemy import Column, DateTime, String, create_engine, orm
 from sqlalchemy.ext.declarative import as_declarative
 from sqlalchemy.orm import Session, declared_attr
 
