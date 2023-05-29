@@ -8,8 +8,11 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 from starlette.types import Message
 
+from src.common.constants import X_REQUEST_ID_HEADER_NAME
 from src.common.util.async_iterator import AsyncIteratorWrapper
 from src.common.util.request_context import RequestContext
+
+from traceback import format_exception
 
 
 class LoggingMiddleware(BaseHTTPMiddleware):
@@ -23,7 +26,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         request_id: str = request.state.request_id
         logging_dict = {
-            "X-Request-Id": request_id  # X-Request-Id maps each request-response to a unique ID
+            X_REQUEST_ID_HEADER_NAME.lower(): request_id  # X-Request-Id maps each request-response to a unique ID
         }
 
         await self.set_body(request)
@@ -108,7 +111,10 @@ class LoggingMiddleware(BaseHTTPMiddleware):
             "time_taken": f"{execution_time:0.4f}s",
         }
 
-        resp_body = [section async for section in response.__dict__["body_iterator"]]
+        if response.status_code == 500:
+            resp_body = response.body.decode("utf-8")
+        else:
+            resp_body = [section async for section in response.__dict__["body_iterator"]]
         response.__setattr__("body_iterator", AsyncIteratorWrapper(resp_body))
 
         try:
@@ -139,8 +145,9 @@ class LoggingMiddleware(BaseHTTPMiddleware):
             response: Response = await call_next(request)
 
             # Kickback X-Request-ID
-            response.headers["X-Request-Id"] = request_id
+            response.headers[X_REQUEST_ID_HEADER_NAME] = request_id
             return response
 
         except Exception as e:
             print({"path": request.url.path, "method": request.method, "reason": e})
+            return Response(content=str(format_exception(e)), status_code=500, headers=request.headers)
